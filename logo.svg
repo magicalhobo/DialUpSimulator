@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 256 256"
+     width="256" height="256">
+
+  <!-- Top highlight -->
+  <rect x="8" y="8" width="240" height="72"
+        rx="2" ry="2"
+        fill="#fff"/>
+
+  <!-- Outer casing -->
+  <rect x="8" y="16" width="240" height="232"
+        rx="2" ry="2"
+        fill="#999"/>
+
+  <!-- Bottom highlight -->
+  <rect x="32" y="216" width="192" height="16"
+        rx="2" ry="2"
+        fill="#fff"/>
+
+  <!-- Inner cavity -->
+  <path d="
+      M32 224
+      H224
+      V64
+      H192
+      V48
+      H176
+      V32
+      H80
+      V48
+      H64
+      V64
+      H32
+      Z"
+        fill="#111827"/>
+
+  <!-- Contacts -->
+  <g fill="#FACC15">
+    <rect x="84" y="152" width="8" height="64" rx="2"/>
+    <rect x="100" y="152" width="8" height="64" rx="2"/>
+    <rect x="116" y="152" width="8" height="64" rx="2"/>
+    <rect x="132" y="152" width="8" height="64" rx="2"/>
+    <rect x="148" y="152" width="8" height="64" rx="2"/>
+    <rect x="164" y="152" width="8" height="64" rx="2"/>
+  </g>
+
+</svg>

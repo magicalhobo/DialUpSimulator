@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connecting...</title>
+  <link rel="stylesheet" href="splash.css">
+</head>
+<body>
+  <div class="container">
+    <div class="modem-box">
+      <div class="modem-header">
+        <div class="modem-light" id="light1"></div>
+        <div class="modem-light" id="light2"></div>
+        <div class="modem-light" id="light3"></div>
+      </div>
+      
+      <div class="screen">
+        <div class="logo">
+          <div class="logo-text">DIAL-UP SIMULATOR</div>
+          <div class="logo-subtext">v1.0</div>
+        </div>
+        
+        <div class="status-box">
+          <div class="status-line" id="status1">Initializing modem...</div>
+          <div class="status-line" id="status2"></div>
+          <div class="status-line" id="status3"></div>
+          <div class="status-line" id="status4"></div>
+          <div class="status-line" id="status5"></div>
+        </div>
+        
+        <div class="progress-container">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="connection-info">
+          <span id="connectionSpeed">Connecting at 56K...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <audio id="dialUpSound" preload="auto">
+    <source src="dial_up.mp3" type="audio/mpeg">
+  </audio>
+  
+  <script src="splash.js"></script>
+</body>
+</html>
