@@ -4,6 +4,8 @@ A Chrome extension that simulates a dial-up connection experience to encourage m
 
 ## Usage
 
+Install the latest official build from the [Chrome Web Store](https://chromewebstore.google.com/detail/fedliecggjdefinfpbbfjfnonnbmjmgg).
+
 1. Click the extension icon to see current status
 2. Click "Settings" to configure the allowlist and timeout
 3. The default allowlist includes common social media sites
@@ -24,3 +26,9 @@ This extension:
 - Does not send any data to external servers
 - Does not monitor your browsing history
 - Only activates for allowlisted domains you specify
+
+## Build
+
+```sh
+zip -r release/dialup-extension.zip . -x "*.git*" -x "release/*" -x "create_icons.sh" -x "*.md" -x LICENSE
+```

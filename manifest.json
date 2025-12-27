@@ -1,11 +1,10 @@
 {
   "manifest_version": 3,
   "name": "Dial-up Simulator",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Simulates a dial-up connection experience to encourage mindful browsing",
   "permissions": [
     "storage",
-    "webRequest",
     "webNavigation",
     "tabs"
   ],
