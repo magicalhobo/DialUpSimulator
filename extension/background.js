@@ -12,20 +12,17 @@ const DEFAULT_SETTINGS = {
   enabled: true
 };
 
-// Check if an origin requires the dial-up splash
+// Find the allowlist domain that matches a given hostname
+function getAllowlistDomain(hostname, allowlist) {
+  return allowlist.find(domain =>
+    hostname === domain || hostname.endsWith('.' + domain)
+  ) || null;
+}
+
+// Check if a URL requires the dial-up splash
 async function shouldShowSplash(url) {
   try {
     const urlObj = new URL(url);
-    const origin = urlObj.origin;
-    
-    // Check for bypass flag (used during programmatic navigation after splash)
-    const bypassKey = `bypass_${origin}`;
-    const { [bypassKey]: bypass } = await chrome.storage.local.get(bypassKey);
-    if (bypass && Date.now() - bypass < 5000) {
-      // Clear the bypass flag
-      await chrome.storage.local.remove(bypassKey);
-      return false;
-    }
     
     const { settings, connectionTimes } = await chrome.storage.local.get(['settings', 'connectionTimes']);
     const config = settings;
@@ -35,17 +32,25 @@ async function shouldShowSplash(url) {
       return false;
     }
     
-    // Check if origin is in allowlist
-    const isAllowlisted = config.allowlist.some(domain => 
-      urlObj.hostname === domain || urlObj.hostname.endsWith('.' + domain)
-    );
+    // Check if hostname is in allowlist
+    const allowlistDomain = getAllowlistDomain(urlObj.hostname, config.allowlist);
     
-    if (!isAllowlisted) {
+    if (!allowlistDomain) {
       return false;
     }
     
-    // Check if timeout has expired
-    const lastConnection = times[origin];
+    // Check for bypass flag (used during programmatic navigation after splash)
+    const bypassKey = `bypass_${allowlistDomain}`;
+    const { [bypassKey]: bypass } = await chrome.storage.local.get(bypassKey);
+    if (bypass && Date.now() - bypass < 5000) {
+      // Clear the bypass flag
+      await chrome.storage.local.remove(bypassKey);
+      return false;
+    }
+    
+    // Check if timeout has expired (keyed by allowlist domain so that
+    // pre-redirect and post-redirect origins share the same entry)
+    const lastConnection = times[allowlistDomain];
     if (!lastConnection) {
       return true;
     }
@@ -60,20 +65,18 @@ async function shouldShowSplash(url) {
   }
 }
 
-// Mark origin as connected
+// Mark a domain as connected
 async function markConnected(url) {
   try {
     const urlObj = new URL(url);
-    const origin = urlObj.origin;
     
-    // Get existing connection times
-    const { connectionTimes } = await chrome.storage.local.get('connectionTimes');
+    const { settings, connectionTimes } = await chrome.storage.local.get(['settings', 'connectionTimes']);
+    const allowlistDomain = getAllowlistDomain(urlObj.hostname, settings.allowlist);
+    if (!allowlistDomain) return;
+    
     const times = connectionTimes || {};
+    times[allowlistDomain] = Date.now();
     
-    // Update with new connection time
-    times[origin] = Date.now();
-    
-    // Save back to storage
     await chrome.storage.local.set({ connectionTimes: times });
   } catch (e) {
     console.error('Error marking connection:', e);
@@ -118,7 +121,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     // Mark connection first, then set bypass flag and navigate
     markConnected(message.url).then(async () => {
       const urlObj = new URL(message.url);
-      const bypassKey = `bypass_${urlObj.origin}`;
+      const { settings } = await chrome.storage.local.get('settings');
+      const allowlistDomain = getAllowlistDomain(urlObj.hostname, settings.allowlist);
+      const bypassKey = `bypass_${allowlistDomain}`;
       
       // Set bypass flag to prevent re-interception
       await chrome.storage.local.set({ [bypassKey]: Date.now() });
