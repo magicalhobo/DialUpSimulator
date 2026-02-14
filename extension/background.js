@@ -83,12 +83,39 @@ async function markConnected(url) {
   }
 }
 
+// Update the toolbar icon to reflect enabled/disabled state
+async function updateIcon() {
+  const { settings } = await chrome.storage.local.get('settings');
+  const enabled = settings?.enabled ?? true;
+  const suffix = enabled ? '' : '-disabled';
+  await chrome.action.setIcon({
+    path: {
+      16: `icons/icon16${suffix}.png`,
+      48: `icons/icon48${suffix}.png`,
+      128: `icons/icon128${suffix}.png`,
+    }
+  });
+}
+
 // Initialize settings
 chrome.runtime.onInstalled.addListener(async () => {
   const { settings } = await chrome.storage.local.get('settings');
   if (!settings) {
     await chrome.storage.local.set({ settings: DEFAULT_SETTINGS });
   }
+  await updateIcon();
+});
+
+// Also sync icon when the service worker starts (e.g. after idle wake)
+updateIcon();
+
+// Toggle enabled state when the toolbar icon is clicked
+chrome.action.onClicked.addListener(async () => {
+  const { settings } = await chrome.storage.local.get('settings');
+  if (!settings) return;
+  settings.enabled = !settings.enabled;
+  await chrome.storage.local.set({ settings });
+  await updateIcon();
 });
 
 // Listen for navigation events

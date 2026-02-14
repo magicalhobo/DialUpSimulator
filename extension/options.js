@@ -1,8 +1,18 @@
+// Debounce helper
+function debounce(fn, delay) {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), delay);
+  };
+}
+
 // DOM elements
 let timeoutInput;
 let volumeInput;
 let volumeValue;
 let allowlistInput;
+let saveButton;
 let resetButton;
 let statusMessage;
 
@@ -103,19 +113,22 @@ document.addEventListener('DOMContentLoaded', () => {
   volumeInput = document.getElementById('volumeInput');
   volumeValue = document.getElementById('volumeValue');
   allowlistInput = document.getElementById('allowlistInput');
+  saveButton = document.getElementById('saveButton');
   resetButton = document.getElementById('resetButton');
   statusMessage = document.getElementById('statusMessage');
   
   // Add event listeners
+  saveButton.addEventListener('click', saveSettings);
   resetButton.addEventListener('click', resetSettings);
   volumeInput.addEventListener('input', () => {
     volumeValue.textContent = volumeInput.value + '%';
   });
   
-  // Auto-save on input changes
-  allowlistInput.addEventListener('input', saveSettings);
-  timeoutInput.addEventListener('change', saveSettings);
-  volumeInput.addEventListener('change', saveSettings);
+  // Auto-save on input changes (debounced)
+  const debouncedSave = debounce(saveSettings, 500);
+  allowlistInput.addEventListener('input', debouncedSave);
+  timeoutInput.addEventListener('change', debouncedSave);
+  volumeInput.addEventListener('change', debouncedSave);
   
   // Load initial settings
   loadSettings();

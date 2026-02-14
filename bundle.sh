@@ -7,7 +7,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 VERSION=$(grep '"version"' "$ROOT/extension/manifest.json" | head -1 | sed 's/.*: *"\(.*\)".*/\1/')
 BUILD="$ROOT/build"
-OUT="$BUILD/no-prime-v${VERSION}.zip"
+OUT="$BUILD/dial-up-simulator-v${VERSION}.zip"
 
 mkdir -p "$BUILD"
 rm -f "$OUT"

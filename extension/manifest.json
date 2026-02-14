@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Dial-up Simulator",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Simulates a dial-up connection experience to encourage mindful browsing",
   "permissions": [
     "storage",
@@ -15,7 +15,6 @@
     "service_worker": "background.js"
   },
   "action": {
-    "default_popup": "popup.html",
     "default_icon": {
       "16": "icons/icon16.png",
       "48": "icons/icon48.png",
